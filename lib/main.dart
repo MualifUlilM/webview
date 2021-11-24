@@ -36,7 +36,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   String url = "http://siedik.demakkab.go.id/vlama/index.php/auth_desa/";
   bool isLoading = true;
   double? _webViewHeight;
-  WebViewController? _webViewController;
 
   @override
   void initState() {
@@ -50,12 +49,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     // remove listener
     WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
-  }
-
-  @override
-  void didChangeMetrics() {
-    // on portrait / landscape or other change, recalculate height
-    _setWebViewHeight();
   }
 
   @override
@@ -101,11 +94,21 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                         print(progress);
                       },
                       onPageFinished: (url) {
-                        setState(() {
-                          isLoading = false;
+                        // get body height webview
+                        _controller.future
+                            .then((c) => c.evaluateJavascript(
+                                'document.body.scrollHeight'))
+                            .then((result) {
+                          final double height = double.parse(result);
+                          print('WebView height set to: $height');
+                          _webViewHeight = height;
+                          setState(() {
+                            isLoading = false;
+                          });
                         });
-                        print(url);
-                        print(isLoading);
+                        // setState(() {
+                        //   isLoading = false;
+                        // });
                       },
                     ),
                   ),
@@ -122,25 +125,5 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             ],
           )),
     ));
-  }
-
-  void _setWebViewHeight() {
-    // we don't updage if WebView is not ready yet
-    // or page load is in progress
-    if (_webViewController == null || isLoading) {
-      return;
-    }
-    // execute JavaScript code in the loaded page
-    // to get body height
-    _webViewController!
-        // ignore: deprecated_member_use
-        .evaluateJavascript('document.body.clientHeight')
-        .then((documentBodyHeight) {
-      // set height
-      setState(() {
-        print('WebView height set to: $documentBodyHeight');
-        _webViewHeight = double.parse(documentBodyHeight);
-      });
-    });
   }
 }
