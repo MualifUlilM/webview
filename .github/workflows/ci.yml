@@ -19,12 +19,12 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: "2.5"
-      - run: echo "{\"url\":\"${{secrets.URL}}\"}" > assets/assets.json
+      - run: echo "{\"url\":\"https://google.com\"}" > assets/assets.json
       - run: flutter pub get
       - run: flutter build apk
       - uses: ncipollo/release-action@v1
-          with: 
-            artifacts: "build/app/outputs/apk/debug/*.apk"
-            token: ${{ secrets.GH_TOKEN }}
-            tag: "1.0.0"
-            commit: ${{ github.sha }}
+        with: 
+          artifacts: "build/app/outputs/apk/debug/*.apk"
+          token: ${{ secrets.GH_TOKEN }}
+          tag: "1.0.0"
+          commit: ${{ github.sha }}
