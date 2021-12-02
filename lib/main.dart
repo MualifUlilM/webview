@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -33,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final Completer<WebViewController> _controller =
       Completer<WebViewController>();
-  String url = "http://siedik.demakkab.go.id/vlama/index.php/auth_desa/";
+  String? url;
   bool isLoading = true;
   double? _webViewHeight;
 
@@ -41,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     // add listener to detect orientation change
+    loadUrlFromJsonAsset();
     WidgetsBinding.instance!.addObserver(this);
   }
 
@@ -60,70 +62,85 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
     return Scaffold(
         body: SafeArea(
-      child: WillPopScope(
-          onWillPop: () async {
-            final bool canGoBack =
-                await _controller.future.then((c) => c.canGoBack());
-            if (canGoBack) {
-              _controller.future.then((c) => c.goBack());
-              return Future<bool>.value(false);
-            }
-            return Future<bool>.value(true);
-          },
-          child: Stack(
-            children: [
-              RefreshIndicator(
-                onRefresh: () async {
-                  await _controller.future.then((c) => c.reload());
-                },
-                child: SingleChildScrollView(
-                  child: Container(
-                    height: _webViewHeight,
-                    child: WebView(
-                      initialUrl: url,
-                      javascriptMode: JavascriptMode.unrestricted,
-                      onWebViewCreated: (WebViewController webViewController) {
-                        _controller.complete(webViewController);
-                      },
-                      onPageStarted: (String url) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                      },
-                      onProgress: (progress) {
-                        print(progress);
-                      },
-                      onPageFinished: (url) {
-                        // get body height webview
-                        _controller.future
-                            .then((c) => c.evaluateJavascript(
-                                'document.body.scrollHeight'))
-                            .then((result) {
-                          final double height = double.parse(result);
-                          print('WebView height set to: $height');
-                          _webViewHeight = height;
-                          setState(() {
-                            isLoading = false;
-                          });
-                        });
-                        // setState(() {
-                        //   isLoading = false;
-                        // });
-                      },
+      child: url == null
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : WillPopScope(
+              onWillPop: () async {
+                final bool canGoBack =
+                    await _controller.future.then((c) => c.canGoBack());
+                if (canGoBack) {
+                  _controller.future.then((c) => c.goBack());
+                  return Future<bool>.value(false);
+                }
+                return Future<bool>.value(true);
+              },
+              child: Stack(
+                children: [
+                  RefreshIndicator(
+                    onRefresh: () async {
+                      await _controller.future.then((c) => c.reload());
+                    },
+                    child: SingleChildScrollView(
+                      child: Container(
+                        height: _webViewHeight,
+                        child: WebView(
+                          initialUrl: url,
+                          javascriptMode: JavascriptMode.unrestricted,
+                          onWebViewCreated:
+                              (WebViewController webViewController) {
+                            _controller.complete(webViewController);
+                          },
+                          onPageStarted: (String url) {
+                            setState(() {
+                              isLoading = true;
+                            });
+                          },
+                          onProgress: (progress) {
+                            print(progress);
+                          },
+                          onPageFinished: (url) {
+                            // get body height webview
+                            _controller.future
+                                .then((c) => c.evaluateJavascript(
+                                    'document.body.scrollHeight'))
+                                .then((result) {
+                              final double height = double.parse(result);
+                              print('WebView height set to: $height');
+                              _webViewHeight = height;
+                              setState(() {
+                                isLoading = false;
+                              });
+                            });
+                            // setState(() {
+                            //   isLoading = false;
+                            // });
+                          },
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              if (isLoading)
-                Container(
-                  // color black with opacity 0.5
-                  color: Colors.black.withOpacity(0.5),
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-            ],
-          )),
+                  if (isLoading)
+                    Container(
+                      // color black with opacity 0.5
+                      color: Colors.black.withOpacity(0.5),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                ],
+              )),
     ));
+  }
+
+  loadUrlFromJsonAsset() async {
+    final String jsonString =
+        await DefaultAssetBundle.of(context).loadString('assets/assets.json');
+    final Map<String, dynamic> jsonMap = json.decode(jsonString);
+    url = jsonMap['url'];
+    setState(() {
+      url = jsonMap['url'];
+    });
   }
 }
