@@ -24,7 +24,7 @@ jobs:
       - run: flutter build ios --debug
       - uses: ncipollo/release-action@v1
         with: 
-          artifacts: "build/app/outputs/apk/debug/*.apk"
+          artifacts: "build/app/"
           token: ${{ secrets.GH_TOKEN }}
           tag: "1.0.0"
           commit: ${{ github.sha }}
