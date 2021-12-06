@@ -21,7 +21,7 @@ jobs:
           flutter-version: "2.5"
       - run: dart script.dart --url=google.com
       - run: flutter pub get
-      - run: flutter build ios --no-codesign
+      - run: flutter build ipa --debug
       # - run: flutter build apk --debug
       - run: ls /Users/runner/work/webview/webview/build/ios/iphoneos/Runner.app
       - uses: ncipollo/release-action@v1
