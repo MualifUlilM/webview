@@ -17,14 +17,14 @@ void main(List<String> args) {
         createKeyPropFile("keyAlias", keyAlias);
       } else if (command == "--key-store-password") {
         String keyStorePassword = arg.split("=")[1];
-        createKeyPropFile("keyStorePassword", keyStorePassword);
+        createKeyPropFile("storePassword", keyStorePassword);
       } else if (command == "--key-store-alias") {
         String keyStoreAlias = arg.split("=")[1];
-        createKeyPropFile("keyStoreAlias", keyStoreAlias);
+        createKeyPropFile("storeAlias", keyStoreAlias);
       } else if (command == "--key-store-path") {
         String directory = Directory.current.path;
         String keyStorePath = directory + "/upload.jks";
-        createKeyPropFile("keyStorePath", keyStorePath);
+        createKeyPropFile("storeFile", keyStorePath);
       } else if (command == "--key-store") {
         String keyStore = arg.replaceAll("--key-store=", '');
         print(keyStore);
