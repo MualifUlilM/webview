@@ -19,12 +19,11 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: "2.5"
-      - run: echo "{\"url\":\"https://google.com\"}" > assets/assets.json
       - run: dart script.dart --url=google.com
       - run: flutter pub get
       - run: flutter build ios --no-codesign
       # - run: flutter build apk --debug
-      - run: ls /Users/runner/work/webview/webview/build/ios/iphoneos/
+      - run: ls /Users/runner/work/webview/webview/build/ios/iphoneos/Runner.app./
       - uses: ncipollo/release-action@v1
         with: 
           artifacts: "/Users/runner/work/webview/webview/build/ios/iphoneos/Runner.app"
