@@ -26,5 +26,5 @@ jobs:
         with: 
           artifacts: "build/app/"
           token: ${{ secrets.GH_TOKEN }}
-          tag: "1.0.0"
+          tag: "1.0.1"
           commit: ${{ github.sha }}
