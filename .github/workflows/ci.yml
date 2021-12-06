@@ -20,10 +20,10 @@ jobs:
         with:
           flutter-version: "2.5"
       - run: echo "{\"url\":\"https://google.com\"}" > assets/assets.json
+      - run: dart script.dart --url=google.com
       - run: flutter pub get
-      # - run: flutter build ios --no-codesign
+      - run: flutter build ios --no-codesign
       # - run: flutter build apk --debug
-      - run: dart
       - run: ls /Users/runner/work/webview/webview/build/ios/iphoneos/
       - uses: ncipollo/release-action@v1
         with: 
