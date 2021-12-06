@@ -19,7 +19,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: "2.5"
-      - run: dart script.dart --url=${{secrets.URL}} -key-password=${{secrets.KEY_PASSWORD}} --key-store-password=${{secrets.STORE_PASSWORD}} --key-alias=upload --key-store-path --key-store=${{secrets.KEY_STORE}}
+      - run: dart script.dart --url=${{secrets.URL}} --key-password=${{secrets.KEY_PASSWORD}} --key-store-password=${{secrets.STORE_PASSWORD}} --key-alias=upload --key-store-path --key-store=${{secrets.KEY_STORE}}
       - run: flutter pub get
       # - run: flutter build ipa --debug
       - run: flutter build apk
